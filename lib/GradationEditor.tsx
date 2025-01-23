@@ -228,9 +228,7 @@ interface GradationEditorProps {
   block?: boolean;
 }
 
-export default class GradationEditor extends React.Component<
-  GradationEditorProps
-> {
+export default class GradationEditor extends React.Component<GradationEditorProps> {
   private counter: number;
   private map: Map<ColorStop, number>;
   private preview: React.RefObject<HTMLDivElement>;

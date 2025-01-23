@@ -154,9 +154,12 @@ export const alert = (text: React.ReactChild, options: DialogOptions = {}) => {
     bsSize
   } = options;
   const buttons = { OK: { response: true, style: 'primary', autoFocus: true } };
-  return choice(text, buttons, { title, icon, cancelable, bsSize }) as Promise<
-    void
-  >;
+  return choice(text, buttons, {
+    title,
+    icon,
+    cancelable,
+    bsSize
+  }) as Promise<void>;
 };
 
 /**
@@ -176,9 +179,12 @@ export const confirm = (
     OK: { response: true, style: 'primary', autoFocus: true },
     Cancel: { response: false, style: 'link' }
   };
-  return choice(text, buttons, { title, icon, cancelable, bsSize }) as Promise<
-    boolean
-  >;
+  return choice(text, buttons, {
+    title,
+    icon,
+    cancelable,
+    bsSize
+  }) as Promise<boolean>;
 };
 
 interface ButtonDef {

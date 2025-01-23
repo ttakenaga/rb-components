@@ -2,10 +2,8 @@ const getHorizontalPositionInElement = (
   parent: HTMLDivElement,
   clientX: number
 ) => {
-  const {
-    left: parentLeft,
-    width: parentWidth
-  } = parent.getBoundingClientRect();
+  const { left: parentLeft, width: parentWidth } =
+    parent.getBoundingClientRect();
   let pos = (clientX - parentLeft) / parentWidth;
   if (clientX < parentLeft) pos = 0;
   if (clientX > parentLeft + parentWidth) pos = 1;
