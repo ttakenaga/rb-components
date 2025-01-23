@@ -10,7 +10,6 @@ import {
   withProgressDialog
 } from '../lib/modal';
 import Modal from 'react-bootstrap/lib/Modal';
-import { rejects } from 'assert';
 
 const onAlertClick = async () => {
   await alert('Alert!');

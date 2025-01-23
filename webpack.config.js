@@ -34,7 +34,7 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: {
     host: process.env.IP || 'localhost',
-    disableHostCheck: true,
+    allowedHosts: 'all',
     hot: true,
     compress: true
   }
