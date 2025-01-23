@@ -1,10 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 module.exports = {
   mode: 'development',
   entry: {
-    demo: ['react-hot-loader/patch', path.join(__dirname, 'demo', 'demo.js')]
+    demo: './demo/demo.js'
   },
   module: {
     rules: [
@@ -15,14 +16,21 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-react', '@babel/preset-typescript'],
-            plugins: ['react-hot-loader/babel']
+            plugins: [require.resolve('react-refresh/babel')]
           }
         }
       }
     ]
   },
   resolve: { extensions: ['.ts', '.tsx', '.js', '.json'] },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new ReactRefreshWebpackPlugin({
+      overlay: {
+        useURLPolyfill: true
+      }
+    })
+  ],
   devtool: 'inline-source-map',
   devServer: {
     host: process.env.IP || 'localhost',
