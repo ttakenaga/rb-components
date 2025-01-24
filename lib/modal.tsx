@@ -12,6 +12,7 @@ import Icon from './Icon';
 import classnames from 'classnames';
 import wrapDisplayName from './utils/wrapDisplayName';
 import { Sizes } from 'react-bootstrap';
+import { createRoot } from 'react-dom/client';
 
 type DialogBase<T> = React.ComponentType<{
   onResolve: (value: T) => void;
@@ -112,16 +113,17 @@ export const modal = <T extends any>(
   return new Promise((resolve, reject) => {
     const container = document.createElement('div');
     document.body.appendChild(container);
+    const root = createRoot(container);
 
     const exited = () => {
       Promise.resolve().then(() => {
-        ReactDOM.unmountComponentAtNode(container);
+        root.unmount();
         document.body.removeChild(container);
       });
     };
 
     const Dialog = createDialog(DialogContent);
-    ReactDOM.render(
+    root.render(
       <Dialog
         onResolve={resolve}
         onReject={reject}
@@ -130,8 +132,7 @@ export const modal = <T extends any>(
         backdrop={backdrop}
         className={className}
         keyboard={keyboard}
-      />,
-      container
+      />
     );
   });
 };
