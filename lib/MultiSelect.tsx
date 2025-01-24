@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, ReactNode } from 'react';
 import Dropdown from 'react-bootstrap/lib/Dropdown';
 import normalizeOptions, {
   Options,
@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import styled from 'styled-components';
 
 type Renderer = React.ComponentType<{
-  caption: React.ReactChild;
+  caption: ReactNode;
   renderAs: string;
 }>;
 

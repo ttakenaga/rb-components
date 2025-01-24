@@ -2,17 +2,16 @@
 // These can be used similarly to standard dialogs like alert() and prompt(),
 // but are non-blocking and have Promise support.
 
-import React, { useState, useRef, Fragment, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useState, useRef, Fragment, useEffect, ReactNode } from 'react';
 import keycode from 'keycode';
 import Button from 'react-bootstrap/lib/Button';
 import Modal from 'react-bootstrap/lib/Modal';
 import ProgressBar from 'react-bootstrap/lib/ProgressBar';
+import { createRoot } from 'react-dom/client';
 import Icon from './Icon';
 import classnames from 'classnames';
 import wrapDisplayName from './utils/wrapDisplayName';
 import { Sizes } from 'react-bootstrap';
-import { createRoot } from 'react-dom/client';
 
 type DialogBase<T> = React.ComponentType<{
   onResolve: (value: T) => void;
@@ -113,6 +112,7 @@ export const modal = <T extends any>(
   return new Promise((resolve, reject) => {
     const container = document.createElement('div');
     document.body.appendChild(container);
+
     const root = createRoot(container);
 
     const exited = () => {
@@ -138,7 +138,7 @@ export const modal = <T extends any>(
 };
 
 interface DialogOptions {
-  title?: React.ReactChild;
+  title?: ReactNode;
   icon?: string;
   cancelable?: boolean;
   bsSize?: Sizes;
@@ -147,7 +147,7 @@ interface DialogOptions {
 /**
  * Async version of native `alert`, with some options.
  */
-export const alert = (text: React.ReactChild, options: DialogOptions = {}) => {
+export const alert = (text: ReactNode, options: DialogOptions = {}) => {
   const {
     title = 'Message',
     icon = 'info-sign',
@@ -166,10 +166,7 @@ export const alert = (text: React.ReactChild, options: DialogOptions = {}) => {
 /**
  * Async version of native `confirm`, with some options.
  */
-export const confirm = (
-  text: React.ReactChild,
-  options: DialogOptions = {}
-) => {
+export const confirm = (text: ReactNode, options: DialogOptions = {}) => {
   const {
     title = 'Confirm',
     icon = 'info-sign',
@@ -210,7 +207,7 @@ type Choices = string[] | { [key: string]: string | ButtonDef };
  *   Resolves with null if dialog's close button is clicked.
  */
 export const choice = (
-  text: React.ReactChild,
+  text: ReactNode,
   choices: Choices,
   options: DialogOptions = {}
 ) => {
@@ -264,8 +261,8 @@ const IconOrElement: React.FC<{ icon: any }> = ({ icon }) => {
 
 const ChoiceDialog: React.FC<{
   icon: string;
-  title: React.ReactChild;
-  text: React.ReactChild;
+  title: ReactNode;
+  text: ReactNode;
   buttons: Buttons;
   closeButton?: boolean;
   onResolve: (value: any) => void;
@@ -305,7 +302,7 @@ const ChoiceDialog: React.FC<{
  * @returns The string input by the user.
  */
 export const prompt = (
-  text: React.ReactChild,
+  text: ReactNode,
   value?: string,
   options: DialogOptions & { password?: boolean; validator?: Function } = {}
 ): Promise<string | null> => {
@@ -335,8 +332,8 @@ export const prompt = (
 const PromptDialog: React.FC<{
   icon?: any;
   password?: boolean;
-  title?: React.ReactChild;
-  text: React.ReactChild;
+  title?: ReactNode;
+  text: ReactNode;
   onResolve: (value: any) => void;
   value?: string;
   validator?: any;
@@ -420,10 +417,7 @@ const PromptDialog: React.FC<{
  * @param task Some unsettled Promise object to wait for.
  * @returns Settles with the same value as the passed promise.
  */
-export const withProgressDialog = (
-  text: React.ReactChild,
-  task: Promise<any>
-) => {
+export const withProgressDialog = (text: ReactNode, task: Promise<any>) => {
   return modal(props => <ProgressDialog text={text} task={task} {...props} />, {
     keyboard: false
   });
@@ -432,7 +426,7 @@ export const withProgressDialog = (
 const ProgressDialog: React.FC<{
   onResolve: (value: any) => void;
   onReject: (value: any) => void;
-  text: React.ReactChild;
+  text: ReactNode;
   task: Promise<any>;
 }> = props => {
   const { text, task, onResolve, onReject } = props;

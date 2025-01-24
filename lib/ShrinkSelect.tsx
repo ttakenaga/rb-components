@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, ReactNode } from 'react';
 import Dropdown from 'react-bootstrap/lib/Dropdown';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import classnames from 'classnames';
@@ -62,7 +62,7 @@ const ShrinkSelect = <T extends string | number = string>(
 
   const options = normalizeOptions(props.options);
 
-  const title: React.ReactChild =
+  const title: ReactNode =
     value in options ? (
       <Renderer {...options[props.value]} />
     ) : defaultSelect !== null ? (
