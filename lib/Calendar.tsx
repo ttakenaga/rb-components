@@ -3,8 +3,7 @@ import Glyphicon from 'react-bootstrap/lib/Glyphicon';
 import Button from 'react-bootstrap/lib/Button';
 import moment from 'moment';
 import classnames from 'classnames';
-import keycode from 'keycode';
-import { uncontrollable } from 'uncontrollable';
+import { useUncontrolled } from 'uncontrollable';
 import styled from 'styled-components';
 
 export const defaultDateFormat = 'YYYY-MM-DD';
@@ -50,14 +49,19 @@ export interface YearMonth {
   month: number;
 }
 
-const ControlledCalendar: React.FC<{
+interface ControlledCalendarProps {
   value: any;
-  onChange: any;
+  onChange: (val: any) => void;
   format?: string;
   disabled?: boolean;
-  yearMonth: YearMonth;
-  onYearMonthChange: (yearMonth: YearMonth) => void;
-}> = props => {
+  yearMonth?: YearMonth | null;
+  onYearMonthChange?: (yearMonth: YearMonth) => void;
+}
+
+const Calendar: React.FC<ControlledCalendarProps> = initialProps => {
+  const props = useUncontrolled<ControlledCalendarProps>(initialProps, {
+    yearMonth: 'onYearMonthChange'
+  });
   const {
     value,
     onChange,
@@ -69,7 +73,13 @@ const ControlledCalendar: React.FC<{
 
   const resolveYearMonthProp = () => {
     const ym = yearMonth;
-    if (ym != undefined && ym.year && ym.month >= 1 && ym.month <= 12) {
+    if (
+      ym != null &&
+      ym != undefined &&
+      ym.year &&
+      ym.month >= 1 &&
+      ym.month <= 12
+    ) {
       return ym;
     }
     const date = new Date();
@@ -78,7 +88,7 @@ const ControlledCalendar: React.FC<{
   const { year, month } = resolveYearMonthProp();
 
   const nav = useCallback(
-    (delta, unit) => {
+    (delta: moment.DurationInputArg1, unit: moment.DurationInputArg2) => {
       if (typeof onYearMonthChange !== 'function') return;
       const newDate = moment({ year, month: month - 1 }).add(delta, unit);
       onYearMonthChange({ year: newDate.year(), month: newDate.month() + 1 });
@@ -100,7 +110,8 @@ const ControlledCalendar: React.FC<{
       if (ev.deltaY > 0) nextMonth();
       if (ev.deltaY < 0) prevMonth();
     };
-    const div = divRef.current!;
+    const div = divRef.current;
+    if (!div) return;
     div.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
       div.removeEventListener('wheel', handleWheel);
@@ -138,10 +149,6 @@ const ControlledCalendar: React.FC<{
   );
 };
 
-// uncontrollable makes this component 'optionally-controllable'.
-export const Calendar = uncontrollable(ControlledCalendar, {
-  yearMonth: 'onYearMonthChange'
-});
 export default Calendar;
 
 const Navicon: React.FC<{
@@ -184,30 +191,40 @@ const CalendarTable: React.FC<{
   const tableRef = useRef<HTMLTableElement>(null);
 
   const handleDateSelect = useCallback(
-    ev => {
+    (
+      ev:
+        | React.MouseEvent<HTMLTableCellElement>
+        | React.KeyboardEvent<HTMLTableCellElement>
+    ) => {
       if (disabled) return;
-      const date = moment.unix(ev.target.dataset.date);
-      if (typeof onChange === 'function') {
-        onChange(date.format(format));
+      const target = ev.target as HTMLTableCellElement;
+      if (target.dataset.date) {
+        const date = moment.unix(Number(target.dataset.date));
+        if (typeof onChange === 'function') {
+          onChange(date.format(format));
+        }
       }
     },
     [disabled, format, onChange]
   );
 
-  const focusRelative = useCallback((ev, delta) => {
-    const children = Array.from(tbodyRef.current!.querySelectorAll('td'));
-    const fromDate = moment.unix(ev.target.dataset.date);
-    const toDate = fromDate.add(delta, 'day').unix();
-    const nextNode = children.find(el => el.dataset.date === String(toDate));
-    if (nextNode) {
-      nextNode.focus();
-      ev.preventDefault();
-      ev.stopPropagation();
-    }
-  }, []);
+  const focusRelative = useCallback(
+    (ev: any, delta: moment.DurationInputArg1) => {
+      const children = Array.from(tbodyRef.current!.querySelectorAll('td'));
+      const fromDate = moment.unix(ev.target.dataset.date);
+      const toDate = fromDate.add(delta, 'day').unix();
+      const nextNode = children.find(el => el.dataset.date === String(toDate));
+      if (nextNode) {
+        nextNode.focus();
+        ev.preventDefault();
+        ev.stopPropagation();
+      }
+    },
+    []
+  );
 
   const handleTableFocus = useCallback(
-    ev => {
+    (ev: React.FocusEvent<HTMLTableElement>) => {
       const children = Array.from(tbodyRef.current!.querySelectorAll('td'));
       if (ev.target === tableRef.current) {
         const valueMoment =
@@ -226,8 +243,8 @@ const CalendarTable: React.FC<{
   const handleTableBlur = useCallback(() => setHasFocus(false), []);
 
   const handleKeyDown = useCallback(
-    ev => {
-      const key = keycode(ev);
+    (ev: React.KeyboardEvent<HTMLTableCellElement>) => {
+      const key = ev.key.toLowerCase();
       switch (key) {
         case 'enter':
         case 'space':

@@ -46,6 +46,7 @@
     "react-refresh": "^0.16.0",
     "styled-components": "^5.1.1",
     "typescript": "^5.7.3",
+    "uncontrollable": "^9.0.0",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.0"
@@ -60,8 +61,7 @@
     "classnames": "^2.2.6",
     "keycode": "^2.2.0",
     "moment": "^2.22.2",
-    "tinycolor2": "^1.4.1",
-    "uncontrollable": "^7.1.1"
+    "tinycolor2": "^1.4.1"
   },
   "prettier": {
     "singleQuote": true,
